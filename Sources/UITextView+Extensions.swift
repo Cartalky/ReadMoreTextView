@@ -35,10 +35,10 @@ extension UITextView {
      */
     public func hitTest(pointInGliphRange aPoint: CGPoint, event: UIEvent?, @noescape test: (Int) -> UIView?) -> UIView? {
         guard let charIndex = charIndexForPointInGlyphRect(point: aPoint) else {
-            return super.hitTest(aPoint, withEvent: event)
+            return super.hitTest(aPoint, with: event)
         }
-        guard textStorage.attribute(NSLinkAttributeName, atIndex: charIndex, effectiveRange: nil) == nil else {
-            return super.hitTest(aPoint, withEvent: event)
+        guard textStorage.attribute(NSLinkAttributeName, at: charIndex, effectiveRange: nil) == nil else {
+            return super.hitTest(aPoint, with: event)
         }
         return test(charIndex)
     }
@@ -69,10 +69,10 @@ extension UITextView {
                 return nil
             }
         #else
-            let glyphIndex = layoutManager.glyphIndexForPoint(point, inTextContainer: textContainer)
-            let glyphRect = layoutManager.boundingRectForGlyphRange(NSMakeRange(glyphIndex, 1), inTextContainer: textContainer)
-            if CGRectContainsPoint(glyphRect, point) {
-                return layoutManager.characterIndexForGlyphAtIndex(glyphIndex)
+            let glyphIndex = layoutManager.glyphIndex(for: point, in: textContainer)
+            let glyphRect = layoutManager.boundingRect(forGlyphRange: NSMakeRange(glyphIndex, 1), in: textContainer)
+            if glyphRect.contains(point) {
+                return layoutManager.characterIndexForGlyph(at: glyphIndex)
             }
             else {
                 return nil
@@ -92,8 +92,8 @@ extension NSLayoutManager {
             var rangeThatFits = self.glyphRange(for: container)
             rangeThatFits = self.characterRange(forGlyphRange: rangeThatFits, actualGlyphRange: nil)
         #else
-            var rangeThatFits = self.glyphRangeForTextContainer(container)
-            rangeThatFits = self.characterRangeForGlyphRange(rangeThatFits, actualGlyphRange: nil)
+            var rangeThatFits = self.glyphRange(for: container)
+            rangeThatFits = self.characterRange(forGlyphRange: rangeThatFits, actualGlyphRange: nil)
         #endif
         return rangeThatFits
     }
@@ -106,8 +106,8 @@ extension NSLayoutManager {
             let glyphRange = self.glyphRange(forCharacterRange: aRange, actualCharacterRange: nil)
             let boundingRect = self.boundingRect(forGlyphRange: glyphRange, in: container)
         #else
-            let glyphRange = self.glyphRangeForCharacterRange(aRange, actualCharacterRange: nil)
-            let boundingRect = self.boundingRectForGlyphRange(glyphRange, inTextContainer: container)
+            let glyphRange = self.glyphRange(forCharacterRange: aRange, actualCharacterRange: nil)
+            let boundingRect = self.boundingRect(forGlyphRange: glyphRange, in: container)
         #endif
         return boundingRect
     }
